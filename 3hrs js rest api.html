@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REST API</title>
+</head>
+<body>
+    <form onsubmit="addUserList(event)">
+        <label>Candy</label>
+        <input type="text" id="candyid" required/>
+        <label>Description</label>
+        <input type="text" id="descid" required/>
+        <label>Price</label>
+        <input type="number" id="priceid"/>
+        <label>Quantity</label>
+        <input type="number" id="quantityid"/>
+        <button type="submit">AddItem</button>
+    </form>
+
+    <ul id="listofitems"></ul>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <script type="text/javascript">
+
+
+
+
+//when add(submit) add for post method used here
+function addUserList(event)
+{
+    event.preventDefault();
+    candy=document.getElementById('candyid').value;
+    description=document.getElementById('descid').value;
+    price=document.getElementById('priceid').value;
+    quantity=document.getElementById('quantityid').value;
+
+    // console.log(candy,description,price,quantity)
+    const obj={candy,description,price,quantity}
+
+    axios.post('https://crudcrud.com/api/faf71726cc894219b99901a9a9de9ac0/choclatedetails',obj)
+    .then((res)=>{
+        showUseronScreen(res.data)
+        console.log(res)
+    }).catch((err)=>{
+// ///if it error occured
+    document.body.innerHTML= document.body.innerHTML+"<h4>Something Went Wrong</h4>"
+    console.log(err)
+})
+    
+}
+
+
+///functionget all 
+function getalluser(userid)
+{
+    axios.get(`https://crudcrud.com/api/faf71726cc894219b99901a9a9de9ac0/choclatedetails/${userid}`)
+.then((res) =>{
+    showUseronScreen(res.data)   
+})
+.catch((err)=>{
+///if it error occured
+    document.body.innerHTML= document.body.innerHTML+"<h4>Something Went Wrong</h4>"
+    console.log(err)
+               })
+}
+
+
+
+
+
+
+
+//Dom content Loaded
+window.addEventListener("DOMContentLoaded",() => {
+    axios.get('https://crudcrud.com/api/faf71726cc894219b99901a9a9de9ac0/choclatedetails')
+.then((res) =>{
+    console.log(res.data);
+    // data is in the format of array
+
+    // for(let key of res.data)
+    // {
+    //     showuseronscreen(key)
+    // }
+
+    for(i=0;i<res.data.length;i++)
+    {
+        showUseronScreen(res.data[i])
+    }
+})
+.catch((err)=>{
+///if it error occured
+    document.body.innerHTML= document.body.innerHTML+"<h4>Something Went Wrong</h4>"
+    console.log(err)
+               })
+})
+
+
+
+///show on screen
+
+function showUseronScreen(user)
+{
+const parentNode=document.getElementById('listofitems')
+
+    const childNode=`<li id=${user._id}>${user.candy}-${user.description}-${user.price}-${user.quantity}
+                        <button onclick=buyOne('${user._id}','${user.candy}','${user.description}','${user.price}','${user.quantity}')>Buyone</button>
+                        <button onclick=buyTwo('${user._id}','${user.candy}','${user.description}','${user.price}','${user.quantity}')>Buytwo</button>
+                         <button onclick=buyThree('${user._id}','${user.candy}','${user.description}','${user.price}','${user.quantity}')>Buythree</button>`
+
+    parentNode.innerHTML=parentNode.innerHTML+childNode; 
+
+}
+
+
+
+
+//buy one
+  function buyOne(userid,candy,description,price,quantity)
+  {
+    let quan=quantity-1
+    if(quan>0)
+    {
+
+        axios.put(`https://crudcrud.com/api/faf71726cc894219b99901a9a9de9ac0/choclatedetails/${userid}`,{
+        "candy": candy,
+    "description": description,
+    "price": price,
+    "quantity": quan
+    }).then(()=>{
+        getalluser(userid);
+        removeUser(userid);
+        
+    })
+    .catch((err)=>{
+///if it error occured
+    document.body.innerHTML= document.body.innerHTML+"<h4>Something Went Wrong</h4>"
+    console.log(err)
+               })
+
+    }
+    else{
+       deleteUser(userid); 
+    }
+   
+    
+}
+
+
+
+
+//buy two
+function buyTwo(userid,candy,description,price,quantity)
+  {
+    let quan=quantity-2
+    if(quan>0)
+    {
+
+        axios.put(`https://crudcrud.com/api/faf71726cc894219b99901a9a9de9ac0/choclatedetails/${userid}`,{
+        "candy": candy,
+    "description": description,
+    "price": price,
+    "quantity": quan
+    }).then(()=>{
+        getalluser(userid);
+        removeUser(userid);
+        
+    })
+    .catch((err)=>{
+///if it error occured
+    document.body.innerHTML= document.body.innerHTML+"<h4>Something Went Wrong</h4>"
+    console.log(err)
+               })
+
+    }
+    else{
+        deleteUser(userid);
+    }
+   
+    
+}
+
+
+
+
+
+
+///buy three
+
+
+function buyThree(userid,candy,description,price,quantity)
+  {
+    let quan=quantity-3;
+    if(quan>0)
+    {
+
+        axios.put(`https://crudcrud.com/api/faf71726cc894219b99901a9a9de9ac0/choclatedetails/${userid}`,{
+        "candy": candy,
+    "description": description,
+    "price": price,
+    "quantity": quan
+    }).then(()=>{
+        getalluser(userid);
+        removeUser(userid);
+        
+    })
+    .catch((err)=>{
+///if it error occured
+    document.body.innerHTML= document.body.innerHTML+"<h4>Something Went Wrong</h4>"
+    console.log(err)
+               })
+
+    }
+    else{
+        deleteUser(userid);
+    }
+   
+    
+}
+
+
+///deleteUsers
+function deleteUser(userid)
+{
+axios.delete(`https://crudcrud.com/api/faf71726cc894219b99901a9a9de9ac0/choclatedetails/${userid}`)
+.then((response)=>{
+    removeUser(userid)
+}).catch((err)=>{
+///if it error occured
+    document.body.innerHTML= document.body.innerHTML+"<h4>Something Went Wrong</h4>"
+    console.log(err)
+               })
+}
+
+
+
+//remove user from list
+function removeUser(userid)
+{
+  
+     let parent=document.getElementById('listofitems');
+    const childNodeDeleted=document.getElementById(userid);
+
+    parent.removeChild(childNodeDeleted)
+
+
+}
+
+
+    </script>
+
+</body>
+</html>
