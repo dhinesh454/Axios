@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REST API</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+   <link rel="stylesheet" href="rest.css">
+</head>
+<body>
+    <div class="container">
+        <h1>CHOCLATE DETAILS</h1>
+        <div class="card">
+    <form onsubmit="addUserList(event)">
+        <label>Candy</label>
+        <input type="text" id="candyid" required/>
+        <label>Description</label>
+        <input type="text" id="descid" required/>
+        <label>Price</label>
+        <input type="number" id="priceid"/>
+        <label>Quantity</label>
+        <input type="number" id="quantityid"/>
+        <button type="submit" class="btn btn-success">AddItem</button>
+    </form>
+</div>
+
+<p  class="stock" style="color: brown;font-size: larger;">LIST OF ITEMS</p>
+<div class="list-group">
+    <ul id="listofitems"></ul>
+
+</div>
+
+</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <script type="text/javascript">
+
+
+
+
+//when add(submit) add for post method used here
+async function addUserList(event)
+{
+    event.preventDefault();
+    candy=document.getElementById('candyid').value;
+    description=document.getElementById('descid').value;
+    price=document.getElementById('priceid').value;
+    quantity=document.getElementById('quantityid').value;
+
+    // console.log(candy,description,price,quantity)
+    const obj={candy,description,price,quantity}
+    try{
+
+    const res = await axios.post('https://crudcrud.com/api/978481befd514b28b4e9c6ab961b0606/choclate',obj)
+    
+        showUseronScreen(res.data)
+        console.log(res)
+    }
+    catch(err){
+// ///if it error occured
+    document.body.innerHTML= document.body.innerHTML+"<h4>Something Went Wrong</h4>"
+    console.log(err)
+}
+    
+}
+
+
+///functionget all 
+async function getalluser(userid)
+{
+    try {
+    const res = await axios.get(`https://crudcrud.com/api/978481befd514b28b4e9c6ab961b0606/choclate/${userid}`)
+
+    showUseronScreen(res.data) ;  
+}
+catch(err)
+{
+///if it error occured
+    document.body.innerHTML= document.body.innerHTML+"<h4>Something Went Wrong</h4>"
+    console.log(err)
+               }
+}
+
+
+
+
+
+
+
+//Dom content Loaded
+window.addEventListener("DOMContentLoaded",async() => {
+
+    try {
+    const res = await axios.get('https://crudcrud.com/api/978481befd514b28b4e9c6ab961b0606/choclate')
+
+    console.log(res.data);
+    // data is in the format of array
+
+    // for(let key of res.data)
+    // {
+    //     showuseronscreen(key)
+    // }
+
+    for(i=0;i<res.data.length;i++)
+    {
+        showUseronScreen(res.data[i])
+    }
+}
+catch(err){
+///if it error occured
+    document.body.innerHTML= document.body.innerHTML+"<h4>Something Went Wrong</h4>"
+    console.log(err)
+               }
+});
+
+
+
+///show on screen
+
+function showUseronScreen(user)
+{
+const parentNode=document.getElementById('listofitems')
+
+let li = document.createElement('li');
+
+
+
+    const childNode=`<li id=${user._id}>${user.candy}-${user.description}-${user.price}-${user.quantity}
+                        <button class="btn btn-warning"  onclick=buyOne('${user._id}',${user.candy}','${user.description}','${user.price}','${user.quantity}')>Buyone</button>
+                        <button class="btn btn-danger" onclick=buyTwo('${user._id}','${user.candy}','${user.description}','${user.price}','${user.quantity}')>Buytwo</button>
+                         <button class="btn btn-info" onclick=buyThree('${user._id}','${user.candy}','${user.description}','${user.price}','${user.quantity}')>Buythree</button>`
+
+    parentNode.innerHTML=parentNode.innerHTML+childNode; 
+
+}
+
+
+
+
+//buy one
+  async function buyOne(userid,candy,description,price,quantity)
+  {
+    let quan=quantity-1
+    if(quan>0)
+    {
+try {
+        await axios.put(`https://crudcrud.com/api/978481befd514b28b4e9c6ab961b0606/choclate/${userid}`,{
+        "candy": candy,
+    "description": description,
+    "price": price,
+    "quantity": quan
+    })
+        getalluser(userid);
+        removeUser(userid);
+        
+    }
+catch(err){
+///if it error occured
+    document.body.innerHTML= document.body.innerHTML+"<h4>Something Went Wrong</h4>"
+    console.log(err)
+               }
+
+    }
+    else{
+       deleteUser(userid); 
+    }
+   
+    
+}
+
+
+
+
+//buy two
+async function buyTwo(userid,candy,description,price,quantity)
+  {
+    let quan=quantity-2;
+    if(quan>0)
+    {
+try {
+        await axios.put(`https://crudcrud.com/api/978481befd514b28b4e9c6ab961b0606/choclate/${userid}`,{
+        "candy": candy,
+    "description": description,
+    "price": price,
+    "quantity": quan
+    })
+        getalluser(userid);
+        removeUser(userid);
+        
+    }
+catch(err){
+///if it error occured
+    document.body.innerHTML= document.body.innerHTML+"<h4>Something Went Wrong</h4>"
+    console.log(err)
+               }
+
+    }
+    else{
+       deleteUser(userid); 
+    }
+   
+    
+}
+
+
+
+
+
+
+///buy three
+
+
+async function buyThree(userid,candy,description,price,quantity)
+  {
+    let quan=quantity-3;
+    if(quan>0)
+    {
+try {
+       await axios.put(`https://crudcrud.com/api/978481befd514b28b4e9c6ab961b0606/choclate/${userid}`,{
+        "candy": candy,
+    "description": description,
+    "price": price,
+    "quantity": quan
+    })
+        getalluser(userid);
+        removeUser(userid);
+        
+    }
+catch(err){
+///if it error occured
+    document.body.innerHTML= document.body.innerHTML+"<h4>Something Went Wrong</h4>"
+    console.log(err)
+               }
+
+    }
+    else{
+       deleteUser(userid); 
+    }
+    
+}
+
+
+///deleteUsers
+async function deleteUser(userid)
+{
+try {
+await axios.delete(`https://crudcrud.com/api/978481befd514b28b4e9c6ab961b0606/choclate/${userid}`)
+
+    removeUser(userid)
+}
+catch(err){
+///if it error occured
+    document.body.innerHTML= document.body.innerHTML+"<h4>Something Went Wrong</h4>"
+    console.log(err)
+               }
+}
+
+
+
+//remove user from list
+function removeUser(userid)
+{
+  
+     let parent=document.getElementById('listofitems');
+    const childNodeDeleted=document.getElementById(userid);
+
+    parent.removeChild(childNodeDeleted)
+
+
+}
+
+
+    </script>
+
+</body>
+</html> 
